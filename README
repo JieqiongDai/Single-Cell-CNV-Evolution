@@ -1,1 +1,0 @@
-The pipeline must be run in the GUI accessable node: ssh -Y helix.nih.gov | ssh -Y biowulf
