@@ -1,0 +1,88 @@
+__default__:
+    mem: 24g
+    partition: quick,norm
+    time: '4:00:00'
+    scratch: lscratch:1 
+
+mkfastq:
+    mem: 160g
+    partition: norm
+    time: '100:00:00'
+
+cnv:
+    mem: 220g
+    partition: norm
+    time: '240:00:00'
+
+link:
+    mem: 24g
+    partition: quick,norm
+    time: '2:00:00'
+
+filter_noisy_cells:
+    mem: 24g
+    partition: quick,norm
+    time: '2:00:00'
+
+reanalysis:
+    mem: 220g
+    partition: norm
+    time: '240:00:00'
+
+link_reanalysis:
+    mem: 24g
+    partition: quick,norm
+    time: '2:00:00'
+
+reanalysis_cnv_matrix:
+    mem: 64g
+    partition: quick,norm
+    time: '2:00:00'
+
+medalt:
+    mem: 400g
+    partition: largemem
+    time: '240:00:00'
+
+cytoscape:
+    mem: 128g
+    partition: quick,norm
+    time: '4:00:00'
+    scratch: lscratch:100
+
+tsne:
+    mem: 128g
+    partition: quick,norm
+    time: '4:00:00'
+
+group_cnv_matrix:
+    mem: 64g
+    partition: quick,norm
+    time: '2:00:00'
+
+medalt_group:
+    mem: 200g
+    partition: norm
+    time: '240:00:00'
+
+cytoscape_group:
+    mem: 128g
+    partition: quick,norm
+    time: '4:00:00'
+    scratch: lscratch:100
+
+tsne_group:
+    mem: 128g
+    partition: quick,norm
+    time: '4:00:00' 
+
+medalt_patient:
+    mem: 200g
+    partition: norm
+    time: '240:00:00'
+
+cytoscape_patient:
+    mem: 128g
+    partition: quick,norm
+    time: '4:00:00'
+    scratch: lscratch:100

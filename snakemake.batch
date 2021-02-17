@@ -1,0 +1,10 @@
+#!/bin/bash
+mkdir log
+
+module load snakemake cellranger-dna R Cytoscape || exit 1
+
+snakemake --cores=1 --unlock
+
+sbcmd="sbatch --cpus-per-task={threads} --output=log/snakejob_%j.out --time={cluster.time} --gres={cluster.scratch} --mem={cluster.mem} --partition={cluster.partition}" 
+snakemake -pr --cluster-config config/cluster_config.yaml --cluster "$sbcmd" --keep-going --rerun-incomplete --jobs 300 --latency-wait 120 all
+

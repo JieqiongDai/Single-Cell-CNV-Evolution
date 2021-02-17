@@ -1,0 +1,197 @@
+rule mkfastq:
+    input:
+          raw + "RTAComplete.txt"
+    output:
+          fastq + "Reports/html/Report.css"       
+    threads: 24 
+    shell:
+          """
+          ulimit -u 10240 -n 16384 2>log/ulimit.err
+          dos2unix {table} 
+          cellranger-dna mkfastq --qc --run={raw} --csv={table} --output-dir={fastq} 2>{run}log/mkfastq.err
+          """
+
+rule cnv:
+    input:
+          rules.mkfastq.output 
+    output:
+          out + "{sample}/outs/possorted_bam.bam",
+          out + "{sample}/outs/possorted_bam.bam.bai",
+          out + "{sample}/outs/alarms_summary.txt",
+          out + "{sample}/outs/dloupe.dloupe",
+          out + "{sample}/outs/web_summary.html",
+          out + "{sample}/outs/node_cnv_calls.bed",
+          out + "{sample}/outs/per_cell_summary_metrics.csv",
+          out + "{sample}/outs/cnv_data.h5",
+          out + "{sample}/outs/mappable_regions.bed"
+    threads: 26 
+    shell:
+          """
+          ulimit -Su 10240 -n 16384
+          cd {out}
+          rm -r {wildcards.sample}
+          cellranger-dna cnv --id={wildcards.sample} --reference={ref} --fastqs={fastq}{flowcell}/{wildcards.sample} --localcores=24 --localmem=200 2>{run}log/{wildcards.sample}_cnv.err
+          """
+
+rule link:
+    input:
+          out + "{sample}/outs/possorted_bam.bam",
+          out + "{sample}/outs/possorted_bam.bam.bai",
+          out + "{sample}/outs/alarms_summary.txt",
+          out + "{sample}/outs/dloupe.dloupe",
+          out + "{sample}/outs/web_summary.html"
+    output:
+          out + "link/bam/{sample}_possorted_bam.bam",
+          out + "link/bam/{sample}_possorted_bam.bam.bai",
+          out + "link/alarm/{sample}_alarms_summary.txt",
+          out + "link/loup/{sample}_dloupe.dloupe",
+          out + "link/summary/{sample}_web_summary.html"
+    threads: 2
+    shell:
+          """
+          ln -s {input[0]} {output[0]} 2>{run}log/{wildcards.sample}_link_bam.err
+          ln -s {input[1]} {output[1]} 2>{run}log/{wildcards.sample}_link_bai.err
+          ln -s {input[2]} {output[2]} 2>{run}log/{wildcards.sample}_link_alarm.err
+          ln -s {input[3]} {output[3]} 2>{run}log/{wildcards.sample}_link_loup.err
+          ln -s {input[4]} {output[4]} 2>{run}log/{wildcards.sample}_link_summary.err
+          """
+
+rule filter_noisy_cells:
+    input:
+          out + "{sample}/outs/per_cell_summary_metrics.csv" 
+    output:
+          out + "{sample}/outs/filter_noisy_cell.csv"
+    threads: 1
+    shell:
+          """
+          awk -F "","" '{{if ($18 == 0) {{print $1}}}}' {input} > {output} 2>{run}log/{wildcards.sample}_filter.err 
+          """
+
+rule config_csv:
+    input:
+          rules.filter_noisy_cells.output
+    output:
+          out + "reanalysis/{sample}_config.csv"
+    threads: 1
+    shell:
+          """
+          touch {output}
+          echo "library_id,barcodes_csv" >> {output}
+          echo "filter_noisy_cell,{input}" >> {output}
+          """ 
+
+rule reanalysis:
+    input:
+          rules.config_csv.output
+    output:
+          out + "reanalysis/{sample}/outs/alarms_summary.txt",
+          out + "reanalysis/{sample}/outs/dloupe.dloupe",
+          out + "reanalysis/{sample}/outs/node_unmerged_cnv_calls.bed",
+          out + "reanalysis/{sample}/outs/per_cell_summary_metrics.csv"
+    params:
+          data = out + "{sample}/outs/cnv_data.h5",
+    threads: 26
+    shell:
+          """
+          ulimit -Su 10240 -n 16384
+          cd {out}reanalysis
+          rm -r {wildcards.sample}
+          cellranger-dna reanalyze --id={wildcards.sample} --reference={ref} --cnv-data={params.data} --csv={input} --localcores=24 --localmem=200 2>{run}log/{wildcards.sample}_reanalysis.err
+          """
+       
+rule link_reanalysis:
+    input:
+          out + "reanalysis/{sample}/outs/alarms_summary.txt",
+          out + "reanalysis/{sample}/outs/dloupe.dloupe",
+    output:
+          out + "reanalysis/link/alarm/{sample}_alarms_summary.txt",
+          out + "reanalysis/link/loup/{sample}_dloupe.dloupe",
+    threads: 1
+    shell:
+          """
+          ln -s {input[0]} {output[0]} 2>{run}log/{wildcards.sample}_link_reanalysis_alarm.err
+          ln -s {input[1]} {output[1]} 2>{run}log/{wildcards.sample}_link_reanalysis_loup.err
+          """
+
+rule reanalysis_cnv_matrix:
+    input:
+          out + "{sample}/outs/mappable_regions.bed",
+          out + "reanalysis/{sample}/outs/node_unmerged_cnv_calls.bed"
+    output:
+          out + "reanalysis/{sample}/outs/scDNA.CNV.txt"
+    threads: 2
+    shell:
+          """
+          cd {out}reanalysis/{wildcards.sample}/outs
+          cp {input[0]} ./
+          Rscript {run}script/cnv_matrix.R 2> {run}log/{wildcards.sample}_cnv_matrix.err
+          """
+
+rule medalt:
+    input:
+          rules.reanalysis_cnv_matrix.output
+    output:
+          out + "MEDALT/{sample}/CNV.tree.txt",
+          out + "MEDALT/{sample}/singlecell.tree.pdf",
+    threads: 1
+    shell:
+          """
+          module load python/2.7
+          module load R/3.5
+          python {medalt}scTree.py -P {medalt} -I {input} -D D -G {genome} -O {out}MEDALT/{wildcards.sample} 2>{run}log/{wildcards.sample}_medalt.err 
+          """
+
+rule file_for_cytoscape:
+    input:
+          out + "MEDALT/{sample}/CNV.tree.txt"
+    output:
+          out + "MEDALT/{sample}/CNV.tree2.txt"
+    threads: 1
+    shell:
+          """
+          cp {input} {output}
+          sed -i -e 's/from/source/g' -e 's/to/target/g' {output} 2>{run}log/{wildcards.sample}_cyto.err
+          """
+
+rule remove_redundant_file:
+    input:
+          expand(out + "{sample}/outs/possorted_bam.bam",sample=sample) 
+    output:
+          "redundant_removed.txt"
+    threads: 1
+    shell:
+          """
+          rm -r {flowcell} 2>{run}log/{flowcell}_rm.err 
+          touch {output} 2>{run}log/touch_rm.err
+          """
+
+rule cytoscape:
+    input:
+          out + "MEDALT/{sample}/CNV.tree2.txt"
+    output:
+          out + "MEDALT/{sample}/medalt.pdf"
+    shell:
+          """
+          cd {out}MEDALT/{wildcards.sample}/
+          export no_proxy=localhost
+          export _JAVA_OPTIONS="-Duser.home=/data/$USER"
+          xvfb-run Cytoscape -R 1234 & sleep 5m && Rscript {run}script/cytoscape.R 2> {run}log/{wildcards.sample}_cytoscape.err 
+          """ 
+
+rule tsne:
+    input:
+          out + "reanalysis/{sample}/outs/scDNA.CNV.txt"
+    output:
+          out + "reanalysis/{sample}/outs/tsne.pdf",
+          out + "reanalysis/{sample}/outs/plotly_tsne.html",
+          out + "reanalysis/link/tsne/{sample}_tsne.pdf",
+          out + "reanalysis/link/tsne/{sample}_plotly_tsne.html"
+    threads: 2
+    shell:
+          """
+          cd {out}reanalysis/{wildcards.sample}/outs
+          Rscript {run}script/tsne.R 2> {run}log/{wildcards.sample}_tsne.err
+          ln -s {output[0]} {output[2]}
+          ln -s {output[1]} {output[3]} 2>{run}log/{wildcards.sample}_tsne_link.err
+          """
+

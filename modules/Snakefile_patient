@@ -1,0 +1,62 @@
+###This workflow is for evolutionary analysis using single cell DNA-seq CNV group information of all samples in each patient
+
+rule merge_cnv_matrix:
+    input:
+          out + "reanalysis/{patient}-N/outs/node_unmerged_cnv_calls.bed",
+          out + "reanalysis/{patient}-T/outs/node_unmerged_cnv_calls.bed",
+          out + "reanalysis/{patient}-M/outs/node_unmerged_cnv_calls.bed",
+          out + "reanalysis/{patient}-N/outs/mappable_regions.bed",
+          out + "reanalysis/{patient}-T/outs/mappable_regions.bed",
+          out + "reanalysis/{patient}-M/outs/mappable_regions.bed",
+          "patient/{patient}/group.txt"
+    output:
+          out + "MEDALT_patient/{patient}/scDNA.CNV.txt",
+          out + "MEDALT_patient/{patient}/group_filter.txt"
+    script: "../script/merge_cnv_groups.R"
+
+
+rule medalt_patient:
+    input:
+          out + "MEDALT_patient/{patient}/scDNA.CNV.txt"
+    output:
+          out + "MEDALT_patient/{patient}/CNV.tree.txt",
+          out + "MEDALT_patient/{patient}/singlecell.tree.pdf"
+    threads: 1
+    shell:
+          """
+          module load python/2.7
+          module load R/3.5
+          python {medalt}scTree.py -P {medalt} -I {input} -D D -G {genome} -O {out}MEDALT_patient/{wildcards.patient} 2>log/{wildcards.patient}_medalt_patient.err
+          """
+
+rule file_for_cytoscape2:
+    input:
+          out + "MEDALT_patient/{patient}/CNV.tree.txt",
+          out + "MEDALT_patient/{patient}/group_filter.txt"
+    output:
+          out + "MEDALT_patient/{patient}/CNV.tree2.txt",
+          out + "MEDALT_patient/{patient}/node_cyto_tmp.txt",
+          out + "MEDALT_patient/{patient}/node_cyto.txt"
+    threads:1
+    shell:
+          """
+          cp {input[0]} {output[0]}
+          sed -i -e 's/from/source/g' -e 's/to/target/g' -e 's/X//g' {output[0]} 2>log/{wildcards.patient}_cyto.err
+          awk -v OFS='\t' '{{print $0,$1 "-" $2}}' {input[1]} > {output[1]} 2>log/{wildcards.patient}_node_cyto.err
+          awk 'BEGIN{{OFS="\t"; print "name","cell.number","sample","infor"}} {{print $0, ""}}' {output[1]} > {output[2]} 2>log/{wildcards.patient}_header_node_cyto.err
+          """
+
+rule cytoscape_patient:
+    input:
+          out + "MEDALT_patient/{patient}/CNV.tree2.txt",
+          out + "MEDALT_patient/{patient}/node_cyto.txt"
+    output:
+          out + "MEDALT_patient/{patient}/medalt.patient.force.directed.pdf"
+    shell:
+          """
+          cd {out}MEDALT_patient/{wildcards.patient}/
+          export no_proxy=localhost
+          export _JAVA_OPTIONS="-Duser.home=/data/$USER"
+          xvfb-run Cytoscape -R 1234 & sleep 5m && Rscript {run}script/cytoscape_patient.R 2> {run}log/{wildcards.patient}_patient_cytoscape.err
+          """
+

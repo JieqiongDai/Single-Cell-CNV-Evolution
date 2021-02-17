@@ -1,0 +1,78 @@
+rule group_cnv_matrix:
+    input:
+          out + "reanalysis/{sample}/outs/group.txt"
+    output:
+          out + "reanalysis/{sample}/outs/group/scDNA.CNV.txt",
+          out + "reanalysis/{sample}/outs/group_filter.txt"
+    threads: 2
+    shell:
+          """
+          cd {out}reanalysis/{wildcards.sample}/outs
+          Rscript {run}script/group_cnv_matrix.R 2> {run}log/{wildcards.sample}_group_cnv_matrix.err
+          """
+
+rule medalt_group:
+    input:
+          out + "reanalysis/{sample}/outs/group/scDNA.CNV.txt"
+    output:
+          out + "MEDALT_group/{sample}/CNV.tree.txt",
+          out + "MEDALT_group/{sample}/singlecell.tree.pdf"
+    threads: 1
+    shell:
+          """
+          module load python/2.7
+          module load R/3.5
+          python {medalt}scTree.py -P {medalt} -I {input} -D D -G {genome} -O {out}MEDALT_group/{wildcards.sample} 2>{run}log/{wildcards.sample}_medalt_group.err 
+          """
+
+rule file_for_cytoscape_group:
+    input:
+          out + "MEDALT_group/{sample}/CNV.tree.txt",
+          out + "reanalysis/{sample}/outs/group_filter.txt"
+    output:
+          out + "MEDALT_group/{sample}/CNV.tree2.txt",
+          out + "MEDALT_group/{sample}/node_cyto_tmp.txt",
+          out + "MEDALT_group/{sample}/node_cyto.txt"
+    threads: 1
+    shell:
+          """
+          cp {input[0]} {output[0]}
+          sed -i -e 's/from/source/g' -e 's/to/target/g' -e 's/X//g' {output[0]} 2>{run}log/{wildcards.sample}_cyto.err
+          awk -v OFS='\t' '{{print $0,$1 "-" $NF}}' {input[1]} > {output[1]} 2>{run}log/{wildcards.sample}_node_cyto.err
+          awk 'BEGIN{{OFS="\t"; print "name","cell number", "infor"}} {{print $0, ""}}' {output[1]} > {output[2]} 2>{run}log/{wildcards.sample}_header_node_cyto.err
+          """
+          
+rule cytoscape_group:
+    input:
+          out + "MEDALT_group/{sample}/CNV.tree2.txt",
+          out + "MEDALT_group/{sample}/node_cyto.txt"
+    output:
+          out + "MEDALT_group/{sample}/medalt.group.force.directed.pdf"
+    shell:
+          """
+          cd {out}MEDALT_group/{wildcards.sample}/
+          export no_proxy=localhost
+          export _JAVA_OPTIONS="-Duser.home=/data/$USER"
+          xvfb-run Cytoscape -R 1234 & sleep 5m && Rscript {run}script/cytoscape_group.R 2> {run}log/{wildcards.sample}_group_cytoscape.err 
+          """
+
+rule tsne_group:
+    input:
+          out + "reanalysis/{sample}/outs/scDNA.CNV.txt",
+          out + "reanalysis/{sample}/outs/cnv_data.h5",
+          out + "reanalysis/{sample}/outs/group.txt"
+    output:
+          out + "reanalysis/{sample}/outs/tsne_group.pdf",
+          out + "reanalysis/{sample}/outs/plotly_tsne_group.html",
+          out + "reanalysis/link/tsne/{sample}_tsne_group.pdf",
+          out + "reanalysis/link/tsne/{sample}_plotly_tsne_group.html"
+
+    threads: 2
+    shell:
+          """
+          cd {out}reanalysis/{wildcards.sample}/outs
+          Rscript {run}script/tsne_group.R 2> {run}log/{wildcards.sample}_tsne_group.err
+          ln -s {output[0]} {output[2]}
+          ln -s {output[1]} {output[3]} 2>{run}log/{wildcards.sample}_tsne_group_link.err
+          """
+
