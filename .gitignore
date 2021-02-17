@@ -5,5 +5,6 @@ snakemake.batch
 snakemake_workflow_graph.sh
 sbatch.sh
 scDNA_whole.png
+._scDNA_whole.png
 README.txt
 README
