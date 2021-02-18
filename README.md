@@ -87,17 +87,24 @@ Optional parameters:
 ### V. To run
 * Clone the repository to your working directory
 ```bash
-git clone 
+git clone https://github.com/JieqiongDai/SingleCellCNV-Evolution.git
 ```
-* Eedit and save config/config.yaml 
-* Install required software; To run on NIH biowulf (an HPC using slurm job scheduler)
-Run sbatch.sh to initiate running of the snakemake pipeline; See snakemake documentation for more details.
-Look in log directory in your working directory for logs for each rule
-Note that for troubleshooting, you can re-run the command printed in this log with additional snakemake command line options, like -n for a dry run or --dag ... | dot -Tsvg > dag.svg to visualize the directed acyclic graph. See snakemake documentation for more details.
+* Install required software; To run on NIH biowulf (an HPC using slurm job scheduler), you only need to download the MDEALT package and module load other required software.
+* Edit and save config/config.yaml 
+* To run on an HPC using slurm job scheduler: 
+  Edit config/cluster_config.yaml according to your HPC information
+  Run sbatch.sh to initiate running of the pipeline 
+* To run in a local environment:
+  ```bash
+  snakemake -p --use-conda --cores 14 --keep-going --rerun-incomplete --jobs 300 --latency-wait 120 all
+  ```
+* Look in log directory for logs for each rule
+* To view the snakemkae rule graph:
+```bash
+snakemake --rulegraph | dot -T png > scDNA_whole.png
+```
 
-/path/to/config.yaml passes all checks.
-Command run: conf=/path/to/config.yaml snakemake -p -s /path/to/Snakefile_SV_scaffold --use-singularity --singularity-args "-B /path/to/input:/input,/ttemp/sv:/scratch,/path/to/refGenomes:/ref,/path/to/SV_out:/output,/path/to/pipeline:/exec" --rerun-incomplete --cluster "qsub -V -S /bin/sh -q queue.q -o /path/to/SV_out/logs -j y" --jobs 8 --latency-wait 300 &> /path/to/SV_out/logs/MoCCA-SV_201904041317.out
-Note that for troubleshooting, you can re-run the command printed in this log with additional snakemake command line options, like -n for a dry run or --dag ... | dot -Tsvg > dag.svg to visualize the directed acyclic graph. See snakemake documentation for more details.
+
 ### V. Output
 
 [Example](https://github.com/NCI-CGR/IGV_snapshot_automation/tree/main/example/output)
