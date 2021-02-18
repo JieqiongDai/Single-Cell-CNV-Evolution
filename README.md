@@ -59,7 +59,6 @@ Three tab-delimited, headerless columns: 10 X group ID, cell number, tissue type
 Example:
 ```bash
 6518  2718	N
-1141	35 T
 1016	183	T
 1024	153	T
 1020	92	T
@@ -118,9 +117,5 @@ snakemake --rulegraph | dot -T png > scDNA_whole.png
       |--- {sampleID}/          # All snapshots of each sample or group
 ```
 
-### V. To run on an HPC
-* Check with system administrator to make sure the xvfb-run command is available universally across the cluster.
-* Edit config/config.yaml and save
-* To run on an HPC using Slurm job scheduler like NIH Biowulf: run sbatch.sh; look in log directory for logs for each rule.
-* To run on an HPC using SGE job scheduler like Cgems: run qsub.sh; look in log directory for logs for each rule.
+
 
