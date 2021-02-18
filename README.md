@@ -5,34 +5,31 @@ This snakemake pipeline is for single cell copy number evolutionary analysis sta
 ## Software Requirements
 * [Snakemake](https://snakemake.readthedocs.io/en/stable/)
 * [cellranger-dna](https://support.10xgenomics.com/single-cell-dna/software/pipelines/latest/using/cnv)
+* [MEDALT](https://github.com/KChen-lab/MEDALT)
 * [Xvfb](https://www.x.org/releases/X11R7.6/doc/man/man1/Xvfb.1.xhtml)
 * [Cytoscape](https://cytoscape.org/)
 * [R](https://www.r-project.org)
-  * [dplyr](https://cran.r-project.org/web/packages/dplyr/index.html)
-  * [tidyr](https://cran.r-project.org/web/packages/tidyr/index.html)
-  * [RCy3](https://bioconductor.org/packages/release/bioc/html/RCy3.html)
-  * [Rtsne](https://cran.r-project.org/web/packages/Rtsne/index.html)
-  * [ggplot2](https://cran.r-project.org/web/packages/ggplot2/index.html)
-  * [rhdf5](https://bioconductor.org/packages/release/bioc/html/rhdf5.html)
-  * [plotly](https://cran.r-project.org/web/packages/plotly/index.html)
 
 ## User's guide
 ### I. Input requirements
 * Edited config/config.yaml
-* Bed files: {sampleID}.bed, Only one file allowed for each sample or group.[Example](https://github.com/NCI-CGR/IGV_snapshot_automation/tree/main/example/data/bed) Using a universal bed file for all samples or groups is also allowed.
-* Bam files with indexes: {sampleID}*.bam, {sampleID}*.bam.bai, multiple files allowed for each sample or group. The filename(s) should start with the same string as the bed file filename of the same sample or group if NOT using a universal bed file. [Example](https://github.com/NCI-CGR/IGV_snapshot_automation/tree/main/example/data/bam)
-* Reference genome fasta file
-### II. Bed file format
-Three headerless columns: chromosome, start position, end position
+* 10 X single cell CNV raw data
+* 10 X simple sample sheet csv file
+* [cellramger-dna reference](https://support.10xgenomics.com/single-cell-dna/software/pipelines/latest/advanced/references)
+### II. 10 X simple sample sheet csv format
+Three columns with headers: Lane,Sample,Index
 
 Example:
 ```bash
-HPV31_Ref 4319 4339
-HPV52_Ref 2161 2181
+Lane,Sample,Index
+1,A,SI-GA-A4
+1,B,SI-GA-B4
+2,A,SI-GA-A4
+2,B,SI-GA-B4
 ```
 ### III. Editing the config.yaml
 Basic parameters:
-* path_to_software: Path to the IGV-snapshot-automator installed directory
+* medalt: Path to MEDALT  installed directory
 * reference: Path to the reference genome file
 * bam_directory: Path to the bam files
 * bed_direcotry: Path to the bed files
