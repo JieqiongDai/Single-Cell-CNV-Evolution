@@ -103,6 +103,7 @@ git clone https://github.com/JieqiongDai/SingleCellCNV-Evolution.git
 ```bash
 snakemake --rulegraph | dot -T png > scDNA_whole.png
 ```
+![dag](https://github.com/JieqiongDai/SingleCellCNV-Evolution/blob/master/scDNA_whole.png)
 
 
 ### V. Output
