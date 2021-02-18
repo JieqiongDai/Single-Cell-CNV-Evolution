@@ -1,6 +1,6 @@
 # SingleCellCNV-Evolution
 ## Description
-This snakemake pipeline is for single cell copy number evolutionary analysis starting with 10 X single cell CNV data.
+This snakemake pipeline is for single cell copy number evolutionary analysis using 10 X single cell CNV data and the MEDALT package. The pipeline may be run on an HPC or in a local environment.
 
 ## Software Requirements
 * [Snakemake](https://snakemake.readthedocs.io/en/stable/)
@@ -9,6 +9,12 @@ This snakemake pipeline is for single cell copy number evolutionary analysis sta
 * [Xvfb](https://www.x.org/releases/X11R7.6/doc/man/man1/Xvfb.1.xhtml)
 * [Cytoscape](https://cytoscape.org/)
 * [R](https://www.r-project.org)
+
+## Run modes
+The pipeline has three run modes available; the last two run modes are optional and the detail of how-to-run is described in User's guider - Editing the config.yaml:
+* Basic single cell based analysis: CNV evolutionary analysis is performed at the single cell level 
+* Cluster based analysis: CNV evolutionary analysis is performed at the cell cluster level
+* Cluster based analysis in merged patient samples: CNV evolutionary analysis is performed at the cell cluster level and all samples in the same patient are merged
 
 ## User's guide
 ### I. Input requirements
@@ -19,9 +25,9 @@ Basic:
 * [cellramger-dna reference](https://support.10xgenomics.com/single-cell-dna/software/pipelines/latest/advanced/references)
 
 Optional:
-* To run cluster based CNV evolutionary analysis when the general pipeline is complete:
+* Required for the run mode of cluster based analysis; can be generated using the result from the basic run mode:
   {output_directory}/reanalysis/{sampleID}/outs/group.txt
-* To run Cluster based CNV evolutionary analysis in merged patient samples when the general pipeline is complete:
+* Required for the run mode of cluster based analysis in merged patient samples; can be generated using the result from the basic run mode:
   {working_directory}/patient/{patientID}/group.txt
 
 ### II. 10 X simple sample sheet csv file format
@@ -75,8 +81,8 @@ Basic parameters:
 * ref: Path to cellranger-dna reference stored directory
 
 Optional parameters:
-* group: Input 'ready' to run cluster based CNV evolutionary analysis when the general pipeline is complete and the require group.txt files are ready
-* patient: Input 'ready' to run cluster based CNV evolutionary analysis in merged patient samples when the general pipeline is complete and the require group.txt files are ready
+* group: Input 'ready' to initiate the run mode of cluster based analysis when the basic run mode is complete and the require group.txt files are ready
+* patient: Input 'ready' to initiate the run mode of cluster based Canalysis in merged patient samples when the basic run mode is complete and the require group.txt files are ready
 
 ### V. Output
 
