@@ -11,7 +11,7 @@ This snakemake pipeline is for single cell copy number evolutionary analysis usi
 * [R](https://www.r-project.org)
 
 ## Run modes
-The pipeline has three run modes available; the last two run modes are optional and the detail of how-to-run is described in User's guider - Editing the config.yaml:
+The pipeline has three run modes available; The first run mode is basic and the others are dependent on it; The detail of how-to-run is described in User's guider:
 * Basic single cell based analysis: CNV evolutionary analysis is performed at the single cell level 
 * Cluster based analysis: CNV evolutionary analysis is performed at the cell cluster level
 * Cluster based analysis in merged patient samples: CNV evolutionary analysis is performed at the cell cluster level and all samples in the same patient are merged
@@ -25,9 +25,9 @@ Basic:
 * [cellramger-dna reference](https://support.10xgenomics.com/single-cell-dna/software/pipelines/latest/advanced/references)
 
 Optional:
-* Required for the run mode of cluster based analysis; can be generated using the result from the basic run mode:
+* Required for the run mode of cluster based analysis and can be generated using the result from the basic run mode:
   {output_directory}/reanalysis/{sampleID}/outs/group.txt
-* Required for the run mode of cluster based analysis in merged patient samples; can be generated using the result from the basic run mode:
+* Required for the run mode of cluster based analysis in merged patient samples and can be generated using the result from the basic run mode:
   {working_directory}/patient/{patientID}/group.txt
 
 ### II. 10 X simple sample sheet csv file format
@@ -44,6 +44,7 @@ Lane,Sample,Index
 
 ### III. group.txt file format
 * {output_directory}/reanalysis/{sampleID}/outs/group.txt
+
 Two tab-delimited, headerless columns: 10 X group ID, cell number
 
 Example:
@@ -54,6 +55,7 @@ Example:
 387	33
 ```
 * {working_directory}/patient/{patientID}/group.txt
+
 Three tab-delimited, headerless columns: 10 X group ID, cell number, tissue type
 
 Example:
@@ -88,7 +90,7 @@ Optional parameters:
 ```bash
 git clone https://github.com/JieqiongDai/SingleCellCNV-Evolution.git
 ```
-* Install required software; To run on NIH biowulf (an HPC using slurm job scheduler), you only need to download the MDEALT package and module load other required software.
+* Install required software; The conda environment for MEDALT is included in the pipeline with no requirement of pre-installation; To run on NIH biowulf (an HPC using slurm job scheduler), you only need to download the MDEALT package and module load other required software.
 * Edit and save config/config.yaml 
 * To run on an HPC using slurm job scheduler: 
   Edit config/cluster_config.yaml according to your HPC information
