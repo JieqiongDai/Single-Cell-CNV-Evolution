@@ -61,13 +61,13 @@ Three tab-delimited, headerless columns: 10 X group ID, cell number, tissue type
 Example:
 ```bash
 6518  2718	N
-1016	183	T
-1024	153	T
+1016	1083	T
+1024	953	T
 1020	92	T
-391	54	M
-364	19	M
-375	39	M
-387	33	M
+391	540	M
+364	190	M
+375	390	M
+387	330	M
 ```
 
 ### IV. Editing the config.yaml
