@@ -61,7 +61,7 @@ rule filter_noisy_cells:
           out + "{sample}/outs/per_cell_summary_metrics.csv" 
     output:
           out + "{sample}/outs/filter_noisy_cell.csv"
-    threads: 1
+    threads: 2 
     shell:
           """
           awk -F "","" '{{if ($18 == 0) {{print $1}}}}' {input} > {output} 2>{run}log/{wildcards.sample}_filter.err 
@@ -72,7 +72,7 @@ rule config_csv:
           rules.filter_noisy_cells.output
     output:
           out + "reanalysis/{sample}_config.csv"
-    threads: 1
+    threads: 2 
     shell:
           """
           touch {output}
@@ -106,7 +106,7 @@ rule link_reanalysis:
     output:
           out + "reanalysis/link/alarm/{sample}_alarms_summary.txt",
           out + "reanalysis/link/loup/{sample}_dloupe.dloupe",
-    threads: 1
+    threads: 2 
     shell:
           """
           ln -s {input[0]} {output[0]} 2>{run}log/{wildcards.sample}_link_reanalysis_alarm.err
@@ -133,11 +133,10 @@ rule medalt:
     output:
           out + "MEDALT/{sample}/CNV.tree.txt",
           out + "MEDALT/{sample}/singlecell.tree.pdf",
-    threads: 1
+    conda: "../env/medalt_env.yaml"
+    threads: 2 
     shell:
           """
-          module load python/2.7
-          module load R/3.5
           python {medalt}scTree.py -P {medalt} -I {input} -D D -G {genome} -O {out}MEDALT/{wildcards.sample} 2>{run}log/{wildcards.sample}_medalt.err 
           """
 
@@ -146,7 +145,7 @@ rule file_for_cytoscape:
           out + "MEDALT/{sample}/CNV.tree.txt"
     output:
           out + "MEDALT/{sample}/CNV.tree2.txt"
-    threads: 1
+    threads: 2 
     shell:
           """
           cp {input} {output}
@@ -158,7 +157,7 @@ rule remove_redundant_file:
           expand(out + "{sample}/outs/possorted_bam.bam",sample=sample) 
     output:
           "redundant_removed.txt"
-    threads: 1
+    threads: 2 
     shell:
           """
           rm -r {flowcell} 2>{run}log/{flowcell}_rm.err 

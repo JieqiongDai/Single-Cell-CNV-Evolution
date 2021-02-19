@@ -1,13 +1,18 @@
 # Check required packages
 # function for installing needed packages
 installpkg <- function(x){
+    r = getOption("repos")
+    r["CRAN"] = "http://cran.us.r-project.org"
+    options(repos = r)
     if(x %in% rownames(installed.packages())==FALSE) {
         if(x %in% rownames(available.packages())==FALSE) {
-            paste(x,"is not a valid package - please check again...")
+            if (!requireNamespace("BiocManager", quietly = TRUE))
+               install.packages("BiocManager")
+               BiocManager::install(x,ask = FALSE) 
         } else {
-            install.packages(x, repos="https://mirror.las.iastate.edu/CRAN/")           
+            install.packages(x)           
         }
-
+        paste(x, "package is installed...")
     } else {
         paste(x,"package already installed...")
     }
