@@ -22,6 +22,10 @@ ref = config["ref"]
 medalt = config["medalt"]
 genome = config["genome"]
 
+# cytoscape style files
+scCNV = run + "cytoscape_styles/scCNV.xml"
+scCNV_group = run + "cytoscape_styles/scCNV_group.xml"
+
 # Define wildcards
 with open(table,'r') as f:
      reader = csv.reader(f)
