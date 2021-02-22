@@ -90,14 +90,14 @@ Optional parameters:
 ```bash
 git clone https://github.com/JieqiongDai/SingleCellCNV-Evolution.git
 ```
-* Install required software; The conda environment for MEDALT is included in the pipeline with no requirement of pre-installation; To run on NIH biowulf (an HPC using slurm job scheduler), you only need to download the MDEALT package and module load other required software.
+* Install required software; To run on NIH biowulf (an HPC using slurm job scheduler), you only need to download the MDEALT package and module load other required software.
 * Edit and save config/config.yaml 
 * To run on an HPC using slurm job scheduler: 
   Edit config/cluster_config.yaml according to your HPC information
   Run sbatch.sh to initiate running of the pipeline 
 * To run in a local environment:
   ```bash
-  snakemake -p --use-conda --cores 14 --keep-going --rerun-incomplete --jobs 300 --latency-wait 120 all
+  snakemake -p --cores 14 --keep-going --rerun-incomplete --jobs 300 --latency-wait 120 all
   ```
 * Look in log directory for logs for each rule
 * To view the snakemkae rule graph:
