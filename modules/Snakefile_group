@@ -44,7 +44,8 @@ rule file_for_cytoscape_group:
 rule cytoscape_group:
     input:
           out + "MEDALT_group/{sample}/CNV.tree2.txt",
-          out + "MEDALT_group/{sample}/node_cyto.txt"
+          out + "MEDALT_group/{sample}/node_cyto.txt",
+          scCNV_group
     output:
           out + "MEDALT_group/{sample}/medalt.group.force.directed.pdf"
     shell:
@@ -52,7 +53,7 @@ rule cytoscape_group:
           cd {out}MEDALT_group/{wildcards.sample}/
           export no_proxy=localhost
           export _JAVA_OPTIONS="-Duser.home=/data/$USER"
-          xvfb-run Cytoscape -R 1234 & sleep 5m && Rscript {run}script/cytoscape_group.R 2> {run}log/{wildcards.sample}_group_cytoscape.err 
+          xvfb-run Cytoscape -R 1234 & sleep 5m && Rscript {run}script/cytoscape_group.R -s '{input[2]}' 2> {run}log/{wildcards.sample}_group_cytoscape.err 
           """
 
 rule tsne_group:
