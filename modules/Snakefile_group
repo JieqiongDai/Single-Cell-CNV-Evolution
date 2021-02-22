@@ -17,10 +17,10 @@ rule medalt_group:
     output:
           out + "MEDALT_group/{sample}/CNV.tree.txt",
           out + "MEDALT_group/{sample}/singlecell.tree.pdf"
-    conda: "../env/medalt_env.yaml"
     threads: 2 
     shell:
           """
+          module load python/2.7 R/3.5
           python {medalt}scTree.py -P {medalt} -I {input} -D D -G {genome} -O {out}MEDALT_group/{wildcards.sample} 2>{run}log/{wildcards.sample}_medalt_group.err 
           """
 
