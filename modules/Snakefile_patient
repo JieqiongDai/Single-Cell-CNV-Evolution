@@ -1,5 +1,3 @@
-###This workflow is for evolutionary analysis using single cell DNA-seq CNV group information of all samples in each patient
-
 rule merge_cnv_matrix:
     input:
           out + "reanalysis/{patient}-N/outs/node_unmerged_cnv_calls.bed",
@@ -21,10 +19,10 @@ rule medalt_patient:
     output:
           out + "MEDALT_patient/{patient}/CNV.tree.txt",
           out + "MEDALT_patient/{patient}/singlecell.tree.pdf"
-    conda: "../env/medalt_env.yaml"
     threads: 2 
     shell:
           """
+          module load python/2.7 R/3.5
           python {medalt}scTree.py -P {medalt} -I {input} -D D -G {genome} -O {out}MEDALT_patient/{wildcards.patient} 2>log/{wildcards.patient}_medalt_patient.err
           """
 
