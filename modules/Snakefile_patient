@@ -46,7 +46,8 @@ rule file_for_cytoscape2:
 rule cytoscape_patient:
     input:
           out + "MEDALT_patient/{patient}/CNV.tree2.txt",
-          out + "MEDALT_patient/{patient}/node_cyto.txt"
+          out + "MEDALT_patient/{patient}/node_cyto.txt",
+          scCNV_group
     output:
           out + "MEDALT_patient/{patient}/medalt.patient.force.directed.pdf"
     shell:
@@ -54,6 +55,6 @@ rule cytoscape_patient:
           cd {out}MEDALT_patient/{wildcards.patient}/
           export no_proxy=localhost
           export _JAVA_OPTIONS="-Duser.home=/data/$USER"
-          xvfb-run Cytoscape -R 1234 & sleep 5m && Rscript {run}script/cytoscape_patient.R 2> {run}log/{wildcards.patient}_patient_cytoscape.err
+          xvfb-run Cytoscape -R 1234 & sleep 5m && Rscript {run}script/cytoscape_patient.R -s '{input[2]}' 2> {run}log/{wildcards.patient}_patient_cytoscape.err
           """
 
