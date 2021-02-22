@@ -166,7 +166,8 @@ rule remove_redundant_file:
 
 rule cytoscape:
     input:
-          out + "MEDALT/{sample}/CNV.tree2.txt"
+          out + "MEDALT/{sample}/CNV.tree2.txt",
+          scCNV
     output:
           out + "MEDALT/{sample}/medalt.pdf"
     shell:
@@ -174,7 +175,7 @@ rule cytoscape:
           cd {out}MEDALT/{wildcards.sample}/
           export no_proxy=localhost
           export _JAVA_OPTIONS="-Duser.home=/data/$USER"
-          xvfb-run Cytoscape -R 1234 & sleep 5m && Rscript {run}script/cytoscape.R 2> {run}log/{wildcards.sample}_cytoscape.err 
+          xvfb-run Cytoscape -R 1234 & sleep 5m && Rscript {run}script/cytoscape.R -s '{input[1]}' 2> {run}log/{wildcards.sample}_cytoscape.err 
           """ 
 
 rule tsne:
