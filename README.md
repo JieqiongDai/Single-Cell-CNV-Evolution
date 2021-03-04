@@ -102,7 +102,7 @@ Basic parameters:
 
 Optional parameters:
 * group: Input 'ready' to initiate the run mode of cluster based analysis when the basic run mode is complete and the require group.txt files are ready
-* patient: Input 'ready' to initiate the run mode of cluster based Canalysis in merged patient samples when the basic run mode is complete and the require group.txt files are ready
+* patient: Input 'ready' to initiate the run mode of cluster based analysis in merged patient samples when the basic run mode is complete and the require group.txt files are ready
 
 ### V. To run
 * Clone the repository to your working directory
