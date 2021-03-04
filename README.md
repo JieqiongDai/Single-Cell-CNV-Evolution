@@ -9,13 +9,13 @@ Major steps in the workflow include:
 4) Result visualization using Cytoscape
 
 Expected results include:
-1) Cellular level copy number profiles: 
+* Cellular level copy number profiles: 
    * Accessible to CNVs in interested regions and genes 
-2) Intratumor heterogeneity analysis in single-cell resolution:
+* Intratumor heterogeneity analysis in single-cell resolution:
    * Tumor purity estimation
    * Major tumor cell clusters estimation 
    * Rare subclone detection
-3) Reconstructing tumor evolution lineages: 
+* Reconstructing tumor evolution lineages: 
    * Lineage tracing of single cell 
    * Lineage tracing of the major tumor cell clusters 
    * Lineage tracing of CNA (deep diving)
