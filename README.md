@@ -8,6 +8,21 @@ Major steps in the workflow include:
 3) CNV evolotuionary analysis using MEDALT
 4) Result visualization using Cytoscape
 
+Expected results include:
+1) Cellular level copy number profiles: 
+   * Accessible to CNVs in interested regions and genes 
+2) Intratumor heterogeneity analysis in single-cell resolution:
+   * Tumor purity estimation
+   * Major tumor cell clusters estimation 
+   * Rare subclone detection
+3) Reconstructing tumor evolution lineages: 
+   * Lineage tracing of single cell 
+   * Lineage tracing of the major tumor cell clusters 
+   * Lineage tracing of CNA (deep diving)
+   * Analysis of CNA related genes and pathway (deep diving)
+![image](https://user-images.githubusercontent.com/40248157/110012052-1ae1d300-7cee-11eb-95d7-756bba4db6e2.png)
+
+
 ## Software Requirements
 * [Snakemake](https://snakemake.readthedocs.io/en/stable/)
 * [cellranger-dna](https://support.10xgenomics.com/single-cell-dna/software/pipelines/latest/using/cnv)
