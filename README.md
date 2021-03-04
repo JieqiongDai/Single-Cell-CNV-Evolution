@@ -132,7 +132,7 @@ snakemake --rulegraph | dot -T png > scDNA_whole.png
 ├── link # main output files of cellranger-dna of all samples
 │   ├── alarm # alarm files
 │   │   ├── {sample_A}_alarms_summary.txt
-│   │   ├── {sample_B}_summary.txt
+│   │   ├── {sample_B}_alarms_summary.txt
 │   │   └── {sample_C}_alarms_summary.txt 
 │   ├── bam # indexed bam files
 │   │   ├── {sample_A}_possorted_bam.bam
