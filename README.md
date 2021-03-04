@@ -1,6 +1,6 @@
 # Single Cell Copy Number Variation Evolutionary Analysis
 ## Description
-This snakemake pipeline is for single cell copy number evolutionary analysis using 10 X single cell CNV data and the MEDALT package. The pipeline may be run on an HPC or in a local environment.
+This snakemake pipeline is for single cell copy number evolutionary analysis using 10 X single cell CNV data and the [MEDALT package](https://github.com/KChen-lab/MEDALT). The pipeline may be run on an HPC or in a local environment.
 
 Major steps in the workflow include:
 1) Primary copy number variation (CNV) analysis using cellranger-dna
