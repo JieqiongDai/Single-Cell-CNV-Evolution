@@ -20,8 +20,6 @@ Expected results include:
    * Lineage tracing of the major tumor cell clusters 
    * Lineage tracing of CNA (deep diving)
    * Analysis of CNA related genes and pathway (deep diving)
-![image](https://user-images.githubusercontent.com/40248157/110012052-1ae1d300-7cee-11eb-95d7-756bba4db6e2.png)
-
 
 ## Software Requirements
 * [Snakemake](https://snakemake.readthedocs.io/en/stable/)
