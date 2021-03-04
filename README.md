@@ -107,7 +107,7 @@ Optional parameters:
 ### V. To run
 * Clone the repository to your working directory
 ```bash
-git clone https://github.com/JieqiongDai/SingleCellCNV-Evolution.git
+git clone https://github.com/JieqiongDai/Single-Cell-CNV-Evolution.git
 ```
 * Install required software; To run on NIH biowulf (an HPC using slurm job scheduler), you only need to download the MDEALT package and module load other required software.
 * Edit and save config/config.yaml 
