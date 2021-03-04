@@ -1,19 +1,19 @@
 # path to medalt software
-medalt: '/data/CGR_10X/software/MEDALT/'
+medalt: 'path/MEDALT/'
 # flowcell
 flowcells: 'HLM2GDMXX' 
 # raw data directory
-raw: '/data/CGR_10X/raw_data/scDNA/200929_A00423_0094_BHLM2GDMXX/'
+raw: 'path/raw/'
 # path to samplesheet
-table: '/data/CGR_10X/raw_data/scDNA/200929_A00423_0094_BHLM2GDMXX/200929_A00423_0094_BHLM2GDMXX-simple-1.0.0.csv'
+table: 'path/simple-1.0.0.csv'
 # directory to store fastq files
-fastq: '/data/CGR_10X/fastq/scDNA/200929_A00423_0094_BHLM2GDMXX/'
+fastq: 'path/fastq/'
 # output directory
-out: '/data/CGR_10X/project_output/scDNA/200929_A00423_0094_BHLM2GDMXX/'
+out: 'path/output/'
 # genome
 genome: 'hg38'
 # direcotry to cellramger-dna reference
-ref: '/fdb/cellranger-dna/refdata-GRCh38-1.0.0'
+ref: 'path/cellranger-dna/refdata-GRCh38-1.0.0'
 
 ## To run cluster based CNV evolutionary analysis:
 # input 'ready' when the the below file is ready:
